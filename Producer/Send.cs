@@ -8,6 +8,7 @@ const string message = "Hello World";
 var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
+
 channel.QueueDeclare(
     queueName,
     false,
@@ -16,8 +17,20 @@ channel.QueueDeclare(
     null
 );
 
-var body = Encoding.UTF8.GetBytes(message);
+channel.ConfirmSelect();
+channel.BasicAcks += (_, ea) =>
+{
+    WriteLine(
+        $"Message has been ack-ed. Sequence number: {ea.DeliveryTag}, multiple: {ea.Multiple}");
+};
 
+channel.BasicNacks += (_, ea) =>
+{
+    Error.WriteLine(
+        $"Message has been nack-ed. Sequence number: {ea.DeliveryTag}, multiple: {ea.Multiple}");
+};
+
+var body = Encoding.UTF8.GetBytes(message);
 do
 {
     channel.BasicPublish(

@@ -7,7 +7,7 @@ do
 {
     WriteLine($"[x] Requesting Factorial({input})");
     var response = client.Call(input);
-    
+
     WriteLine("Enter another number to continue or any alphabet to exit.");
     input = ReadLine();
 } while (!string.IsNullOrEmpty(input) &&

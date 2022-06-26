@@ -41,7 +41,7 @@ public class Client
             var body = ea.Body.ToArray();
             var response = Encoding.UTF8.GetString(body);
             WriteLine($"[x] Received response {response}");
-            
+
             if (ea.BasicProperties.CorrelationId == correlationId)
                 _responseQueue.Add(response);
             else
@@ -69,7 +69,7 @@ public class Client
             _props,
             messageBytes
         );
-        WriteLine($"[x] Awaiting response...");
+        WriteLine("[x] Awaiting response...");
         return _responseQueue.Take();
     }
 
