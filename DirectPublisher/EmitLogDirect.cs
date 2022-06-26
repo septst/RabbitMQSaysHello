@@ -2,7 +2,7 @@
 using RabbitMQ.Client;
 using static System.Console;
 
-var exchangeName = "direct_logs";
+const string exchangeName = "direct_logs";
 var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();

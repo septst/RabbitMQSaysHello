@@ -3,21 +3,22 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using static System.Console;
 
-const string exchangeName = "direct_logs";
-var factory = new ConnectionFactory { HostName = "localhost" };
+const string exchangeName = "topic_logs";
+var factory = new ConnectionFactory
+{
+    HostName = "localhost"
+};
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
 channel.ExchangeDeclare(
     exchangeName,
-    ExchangeType.Direct
+    "topic"
 );
-
-var queueName = string.Empty; // channel.QueueDeclare().QueueName;
 
 if (args.Length < 1)
 {
-    Error.WriteLine("Usage: {0} [info] [warning] [error]",
+    Error.WriteLine("Usage: {0} [binding_key...]",
         Environment.GetCommandLineArgs()[0]);
     WriteLine(" Press [enter] to exit.");
     ReadLine();
@@ -25,31 +26,37 @@ if (args.Length < 1)
     return;
 }
 
+var queueName = string.Empty; // channel.QueueDeclare().QueueName;
+
 var consumer = new EventingBasicConsumer(channel);
 consumer.Received += (model, ea) =>
 {
     var body = ea.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
     var routingKey = ea.RoutingKey;
-    WriteLine(" [x] Received '{0}':'{1}'",
-        routingKey, message);
+    var deliveryTag = ea.DeliveryTag;
+
+    WriteLine(" [x] Received '{0}':'{1}' with delivery tag {2}",
+        routingKey,
+        message,
+        deliveryTag);
 
     channel.BasicAck(
-        ea.DeliveryTag,
+        deliveryTag,
         false);
 
     WriteLine(" [*] Waiting for messages. Press any key to exit.");
 };
 
-foreach (var severity in args)
+
+foreach (var bindingKey in args)
 {
     queueName = channel.QueueDeclare().QueueName;
 
     channel.QueueBind(
         queueName,
         exchangeName,
-        severity
-    );
+        bindingKey);
 
     channel.BasicConsume(
         queueName,
@@ -57,6 +64,5 @@ foreach (var severity in args)
         consumer);
 }
 
-WriteLine(" [*] Waiting for messages.");
-WriteLine(" Press any key to exit.");
+WriteLine(" [*] Waiting for messages. Press any key to exit.");
 ReadKey();

@@ -22,7 +22,7 @@ do
 {
     channel.BasicPublish(
         "",
-        "hello",
+        queueName,
         null,
         body
     );

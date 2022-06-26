@@ -32,6 +32,7 @@ do
 
     WriteLine(" [x] Sent '{0}':'{1}'", routingKey, message);
     WriteLine("[x] Please type another message or no to quit sending messages.");
+
     inputs = ReadLine()?.Split(" ");
 } while (inputs?.Length > 0 &&
          !inputs.Contains("no"));
