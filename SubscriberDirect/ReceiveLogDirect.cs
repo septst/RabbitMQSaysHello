@@ -12,7 +12,7 @@ channel.ExchangeDeclare(
     ExchangeType.Direct
 );
 
-var queueName = channel.QueueDeclare().QueueName;
+var queueName = String.Empty;// channel.QueueDeclare().QueueName;
 
 if (args.Length < 1)
 {
@@ -23,19 +23,6 @@ if (args.Length < 1)
     Environment.ExitCode = 1;
     return;
 }
-
-foreach (var severity in args)
-{
-    // queueName = channel.QueueDeclare().QueueName;
-
-    channel.QueueBind(
-        queueName,
-        exchangeName,
-        severity
-    );
-}
-
-Console.WriteLine(" [*] Waiting for messages.");
 
 var consumer = new EventingBasicConsumer(channel);
 consumer.Received += (model, ea) =>
@@ -53,10 +40,22 @@ consumer.Received += (model, ea) =>
     Console.WriteLine(" Press any key to exit.");
 };
 
-channel.BasicConsume(
-    queueName,
-    false,
-    consumer);
+foreach (var severity in args)
+{
+    queueName = channel.QueueDeclare().QueueName;
 
+    channel.QueueBind(
+        queueName,
+        exchangeName,
+        severity
+    );
+    
+    channel.BasicConsume(
+        queueName,
+        false,
+        consumer);
+}
+
+Console.WriteLine(" [*] Waiting for messages.");
 Console.WriteLine(" Press any key to exit.");
 Console.ReadKey();
