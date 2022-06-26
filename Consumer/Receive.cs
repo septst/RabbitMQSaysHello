@@ -1,13 +1,16 @@
 ﻿using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using static System.Console;
 
+const string queueName = "hello";
 var factory = new ConnectionFactory { HostName = "localhost" };
 
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-channel.QueueDeclare("hello",
+channel.QueueDeclare(
+    queueName,
     false,
     false,
     false,
@@ -18,23 +21,23 @@ consumer.Received += (model, eventArgs) =>
 {
     var body = eventArgs.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
-    Console.WriteLine($"[x] consumed {message} message.");
+    WriteLine($"[x] consumed {message} message.");
 
     channel.BasicAck(
         eventArgs.DeliveryTag,
         false);
 
-    Console.WriteLine(" [*] Waiting for messages.");
-    Console.WriteLine("Press any key to exit.");
+    WriteLine(" [*] Waiting for messages.");
+    WriteLine("Press any key to exit.");
 };
 
-Console.WriteLine(" [*] Waiting for messages.");
+WriteLine(" [*] Waiting for messages.");
 
 channel.BasicConsume(
-    "hello",
+    queueName,
     false,
     consumer
 );
 
-Console.WriteLine("Press any key to exit.");
-Console.ReadKey();
+WriteLine("Press any key to exit.");
+ReadKey();

@@ -1,12 +1,14 @@
 ﻿using System.Text;
 using RabbitMQ.Client;
+using static System.Console;
 
+const string queueName = "task_queue";
 var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
 channel.QueueDeclare(
-    "task_queue",
+    queueName,
     true,
     false,
     false,
@@ -24,12 +26,12 @@ do
     var body = Encoding.UTF8.GetBytes(message);
 
     channel.BasicPublish("",
-        "task_queue",
+        queueName,
         properties,
         body);
-    Console.WriteLine($"[x] sent {message} message.");
-    Console.WriteLine("[x] Please type another message or no to quit sending messages.");
-    message = Console.ReadLine();
+    WriteLine($"[x] sent {message} message.");
+    WriteLine("[x] Please type another message or no to quit sending messages.");
+    message = ReadLine();
 } while (!string.IsNullOrEmpty(message) &&
          !message.ToLower().Contains("no"));
 

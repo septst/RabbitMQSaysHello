@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using static System.Console;
 
 var exchangeName = "direct_logs";
 var factory = new ConnectionFactory { HostName = "localhost" };
@@ -16,10 +17,10 @@ var queueName = string.Empty; // channel.QueueDeclare().QueueName;
 
 if (args.Length < 1)
 {
-    Console.Error.WriteLine("Usage: {0} [info] [warning] [error]",
+    Error.WriteLine("Usage: {0} [info] [warning] [error]",
         Environment.GetCommandLineArgs()[0]);
-    Console.WriteLine(" Press [enter] to exit.");
-    Console.ReadLine();
+    WriteLine(" Press [enter] to exit.");
+    ReadLine();
     Environment.ExitCode = 1;
     return;
 }
@@ -30,14 +31,14 @@ consumer.Received += (model, ea) =>
     var body = ea.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
     var routingKey = ea.RoutingKey;
-    Console.WriteLine(" [x] Received '{0}':'{1}'",
+    WriteLine(" [x] Received '{0}':'{1}'",
         routingKey, message);
 
     channel.BasicAck(
         ea.DeliveryTag,
         false);
 
-    Console.WriteLine(" Press any key to exit.");
+    WriteLine(" Press any key to exit.");
 };
 
 foreach (var severity in args)
@@ -56,6 +57,6 @@ foreach (var severity in args)
         consumer);
 }
 
-Console.WriteLine(" [*] Waiting for messages.");
-Console.WriteLine(" Press any key to exit.");
-Console.ReadKey();
+WriteLine(" [*] Waiting for messages.");
+WriteLine(" Press any key to exit.");
+ReadKey();

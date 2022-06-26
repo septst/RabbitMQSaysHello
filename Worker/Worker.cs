@@ -1,7 +1,9 @@
 ﻿using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using static System.Console;
 
+const string queueName = "task_queue";
 var factory = new ConnectionFactory
 {
     HostName = "localhost"
@@ -10,7 +12,7 @@ using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
 channel.QueueDeclare(
-    "task_queue",
+    queueName,
     true,
     false,
     false,
@@ -22,7 +24,7 @@ channel.BasicQos(
     1,
     false);
 
-Console.WriteLine(" [*] Waiting for messages.");
+WriteLine(" [*] Waiting for messages.");
 
 var consumer = new EventingBasicConsumer(channel);
 consumer.Received += (model,
@@ -30,27 +32,27 @@ consumer.Received += (model,
 {
     var body = eventArgs.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
-    Console.WriteLine($"[x] consumed {message} message.");
+    WriteLine($"[x] consumed {message} message.");
 
     var dots = message.Split('.')
         .Length - 1;
     Thread.Sleep(dots * 1000);
 
-    Console.WriteLine(" [x] Done");
+    WriteLine(" [x] Done");
 
     channel.BasicAck(
         eventArgs.DeliveryTag,
         false);
 
-    Console.WriteLine(" [*] Waiting for messages.");
-    Console.WriteLine("Press any key to exit.");
+    WriteLine(" [*] Waiting for messages.");
+    WriteLine("Press any key to exit.");
 };
 
 channel.BasicConsume(
-    "task_queue",
+    queueName,
     false,
     consumer
 );
 
-Console.WriteLine("Press any key to exit.");
-Console.ReadKey();
+WriteLine("Press any key to exit.");
+ReadKey();

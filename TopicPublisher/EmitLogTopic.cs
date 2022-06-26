@@ -2,48 +2,52 @@
 using RabbitMQ.Client;
 using static System.Console;
 
-var exchangeName = "direct_logs";
-var factory = new ConnectionFactory { HostName = "localhost" };
+const string exchangeName = "topic_logs";
+var factory = new ConnectionFactory
+{
+    HostName = "localhost"
+};
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
 channel.ExchangeDeclare(
     exchangeName,
-    ExchangeType.Direct
+    "topic"
 );
 
 var inputs = args;
 
 do
 {
-    var severity = GetSeverity(inputs);
+    var routingKey = GetRoutingKey(inputs);
     var message = GetMessage(inputs);
     var body = Encoding.UTF8.GetBytes(message);
 
     channel.BasicPublish(
         exchangeName,
-        severity,
+        routingKey,
         null,
         body
     );
 
-    WriteLine($"[x] sent {severity}: {message} message.");
+    WriteLine(" [x] Sent '{0}':'{1}'", routingKey, message);
     WriteLine("[x] Please type another message or no to quit sending messages.");
     inputs = ReadLine()?.Split(" ");
 } while (inputs?.Length > 0 &&
          !inputs.Contains("no"));
 
+string GetMessage(string[] args)
+{
+    return args.Length > 1
+        ? string.Join(" ",
+            args.Skip(1)
+                .ToArray())
+        : "Hello World!";
+}
 
-static string GetSeverity(string[] args)
+string GetRoutingKey(string[] args)
 {
     return args.Length > 0
         ? args[0]
-        : "info";
-}
-
-static string GetMessage(string[] args)
-{
-    return args.Length > 1
-        ? string.Join(" ", args.Skip(1).ToArray())
-        : "Hello World!";
+        : "anonymous.info";
 }
