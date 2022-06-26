@@ -42,9 +42,6 @@ public class Client
             var response = Encoding.UTF8.GetString(body);
             WriteLine($"[x] Received response {response}");
             
-            WriteLine($"Request CorrelationId {correlationId}");
-            WriteLine($"Response CorrelationId {ea.BasicProperties.CorrelationId}");
-            
             if (ea.BasicProperties.CorrelationId == correlationId)
                 _responseQueue.Add(response);
             else
