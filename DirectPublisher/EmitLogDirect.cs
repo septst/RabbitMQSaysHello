@@ -42,7 +42,7 @@ static string GetSeverity(string[] args)
 
 static string GetMessage(string[] args)
 {
-    return (args.Length > 1)
+    return args.Length > 1
         ? string.Join(" ", args.Skip(1).ToArray())
         : "Hello World!";
 }

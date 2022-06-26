@@ -12,7 +12,7 @@ channel.ExchangeDeclare(
     ExchangeType.Direct
 );
 
-var queueName = String.Empty;// channel.QueueDeclare().QueueName;
+var queueName = string.Empty; // channel.QueueDeclare().QueueName;
 
 if (args.Length < 1)
 {
@@ -36,7 +36,7 @@ consumer.Received += (model, ea) =>
     channel.BasicAck(
         ea.DeliveryTag,
         false);
-    
+
     Console.WriteLine(" Press any key to exit.");
 };
 
@@ -49,7 +49,7 @@ foreach (var severity in args)
         exchangeName,
         severity
     );
-    
+
     channel.BasicConsume(
         queueName,
         false,

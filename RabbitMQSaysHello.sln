@@ -23,9 +23,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Worker", "Worker", "{0D0934
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Direct", "Direct", "{D5EE8821-5893-4F37-8B16-889816D2DB71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublisherDirect", "PublisherDirect\PublisherDirect.csproj", "{FA13C77A-7B2E-415A-93B3-F6F901E7EEF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectPublisher", "DirectPublisher\DirectPublisher.csproj", "{FA13C77A-7B2E-415A-93B3-F6F901E7EEF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubscriberDirect", "SubscriberDirect\SubscriberDirect.csproj", "{39159296-F915-435F-A795-10E570260D95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectSubscriber", "DirectSubscriber\DirectSubscriber.csproj", "{39159296-F915-435F-A795-10E570260D95}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Topics", "Topics", "{1F03B7FC-F0EE-4578-BF0E-D346ABC93393}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
