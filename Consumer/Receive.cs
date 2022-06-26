@@ -23,7 +23,7 @@ consumer.Received += (model, eventArgs) =>
     channel.BasicAck(
         eventArgs.DeliveryTag,
         false);
-    
+
     Console.WriteLine(" [*] Waiting for messages.");
     Console.WriteLine("Press any key to exit.");
 };

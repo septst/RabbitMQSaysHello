@@ -5,28 +5,26 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-channel.QueueDeclare(
-    "task_queue",
-    true,
-    false,
-    false,
-    null
+Console.WriteLine("EmitLog");
+
+channel.ExchangeDeclare(
+    "logs",
+    ExchangeType.Fanout
 );
 
-var message = "Hello World";
-message = GetMessage(args);
-
-var properties = channel.CreateBasicProperties();
-properties.Persistent = true;
+var message = GetMessage(args);
 
 do
 {
     var body = Encoding.UTF8.GetBytes(message);
 
-    channel.BasicPublish("",
-        "task_queue",
-        properties,
-        body);
+    channel.BasicPublish(
+        "logs",
+        "",
+        null,
+        body
+    );
+
     Console.WriteLine($"[x] sent {message} message.");
     Console.WriteLine("[x] Please type another message or no to quit sending messages.");
     message = Console.ReadLine();
@@ -35,5 +33,7 @@ do
 
 static string GetMessage(string[] args)
 {
-    return args.Length > 0 ? string.Join(" ", args) : "Hello World!";
+    return args.Length > 0
+        ? string.Join(" ", args)
+        : "info: Hello World!";
 }

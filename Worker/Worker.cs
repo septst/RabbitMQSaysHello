@@ -18,9 +18,9 @@ channel.QueueDeclare(
 );
 
 channel.BasicQos(
-    prefetchSize: 0,
-    prefetchCount: 1,
-    global: false);
+    0,
+    1,
+    false);
 
 Console.WriteLine(" [*] Waiting for messages.");
 
@@ -33,7 +33,7 @@ consumer.Received += (model,
     Console.WriteLine($"[x] consumed {message} message.");
 
     var dots = message.Split('.')
-                   .Length - 1;
+        .Length - 1;
     Thread.Sleep(dots * 1000);
 
     Console.WriteLine(" [x] Done");
@@ -41,7 +41,7 @@ consumer.Received += (model,
     channel.BasicAck(
         eventArgs.DeliveryTag,
         false);
-    
+
     Console.WriteLine(" [*] Waiting for messages.");
     Console.WriteLine("Press any key to exit.");
 };
